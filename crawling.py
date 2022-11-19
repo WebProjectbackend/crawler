@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import pymysql
 
 # 네이버 뉴스 크롤링 -> 초코나 뮤직 이라는 단어가 들어만 있으면 다 나옴
 naver_title_list = []
@@ -16,9 +17,8 @@ for i in range(0, 10):
     for t in title:
         link = t.find("a", {"class" : "news_tit"})
         ti = t.find("a", {"class" : "news_tit"}).text
-        
+            
         if "초코뮤직" in ti:
-            print(ti)
             line = []
             line.append(ti)
             line.append(t.find("a", {"class" : "info press"}).text) # 언론사
@@ -26,8 +26,10 @@ for i in range(0, 10):
             line.append(link.attrs["href"]) # 링크
             naver_title_list.append(line)
         para = t.find("a", {"class" : "api_txt_lines dsc_txt_wrap"})
-        if "초코뮤직" in para:
-            print(ti)
+        # print(para)
+        # print("----------------------------------")
+        if "초코뮤직" in para or "초코뮤직" in (para.find("mark")):
+            # print(ti)
             line = []
             line.append(ti)
             line.append(t.find("a", {"class" : "info press"}).text) # 언론사
@@ -35,5 +37,22 @@ for i in range(0, 10):
             line.append(link.attrs["href"]) # 링크
             naver_title_list.append(line)
 
+# conn = pymysql.connect(
+#     user = "root",
+#     password="root",
+#     host="localhost",
+#     db="news"
+# )
 
+# cursor = conn.cursor()
+# cursor.execute("DROP TABLE IF EXISTS naver_news") # 테이블 생성하기
+# cursor.execute("CREATE TABLE naver_news (id int primary key, title text, company text, day text, link text)") 
+# i = 1
+# for l in naver_title_list:
+#     cursor.execute(f"INSERT INTO naver_news VALUES({i}, \"{l[0]}\",\"{l[1]}\",\"{l[2]}\",\"{l[3]}\")")
+#     i += 1
+# conn.commit()
+# conn.close()
 # print(naver_title_list)
+for n in naver_title_list:
+    print(n)
